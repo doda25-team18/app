@@ -19,7 +19,7 @@ COPY --from=build-stage /app/target/*.jar app.jar
 ENV MODEL_HOST="http://localhost:8081" \
     SERVER_PORT=8080
 
-EXPOSE ${SERVER_PORT}
+
 ENTRYPOINT ["sh", "-c", "MODEL_HOST=${MODEL_HOST} SERVER_PORT=${SERVER_PORT} java -jar app.jar"]
 
 
