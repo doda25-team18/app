@@ -3,6 +3,7 @@ package frontend.ctrl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import doda25.team18.VersionUtil;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -54,6 +55,7 @@ public class FrontendController {
     @GetMapping("/")
     public String index(Model m) {
         m.addAttribute("hostname", modelHost);
+        m.addAttribute("libVersion", VersionUtil.getVersion());
         return "sms/index";
     }
 
