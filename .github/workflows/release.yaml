@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout lib-version
-        uses: actions/checkout@v4
-        with:
-          repository: doda25-team18/lib-version
-          path: lib-version
+      # - name: Checkout lib-version
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: doda25-team18/lib-version
+      #     path: lib-version
 
       - name: Set version
         id: version
@@ -28,32 +28,18 @@ jobs:
           distribution: temurin
           java-version: 25
 
-      # Optional: Set up Maven authentication if you need GitHub Packages
-      # - name: Set up Maven authentication
-      #   run: |
-      #     mkdir -p $HOME/.m2
-      #     echo "<settings>
-      #       <servers>
-      #         <server>
-      #           <id>github</id>
-      #           <username>${{ github.actor }}</username>
-      #           <password>${{ secrets.GH_TOKEN }}</password>
-      #         </server>
-      #       </servers>
-      #     </settings>" > $HOME/.m2/settings.xml
-
-      # - name: Build lib-version locally
-      #   run: |
-      #     cd lib-version
-      #     mvn install
-
-      # - name: Build Maven
-      #   run: mvn install
-
-      - name: Build lib-version locally
+      - name: Set up Maven authentication for GitHub Packages
         run: |
-          cd lib-version
-          mvn install
+          mkdir -p $HOME/.m2
+          echo "<settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.GITHUB_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>" > $HOME/.m2/settings.xml
 
       - name: Build frontend
         run: mvn install
