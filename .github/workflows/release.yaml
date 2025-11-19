@@ -28,6 +28,9 @@ jobs:
           distribution: temurin
           java-version: 25
 
+      - name: Frontend
+        run: mvn clean install -U
+
       - name: Install lib-version
         run: |
           cd lib-version
