@@ -15,12 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # - name: Checkout lib-version
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: doda25-team18/lib-version
-      #     path: lib-version
-
       - name: Set version
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
@@ -30,20 +24,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 25
-
-      - name: Checkout lib-version
-        uses: actions/checkout@v4
-        with:
-          repository: doda25-team18/lib-version
-          path: lib-version
-
-      - name: Build lib-version locally
-        run: |
-          cd lib-version
-          mvn install
-
-      - name: Build frontend
-        run: mvn install
 
       - name: Login
         uses: docker/login-action@v3
@@ -56,5 +36,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          platforms: linux/amd64, linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.VERSION }}
