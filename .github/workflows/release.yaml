@@ -50,6 +50,14 @@ jobs:
       # - name: Build Maven
       #   run: mvn install
 
+      - name: Build lib-version locally
+        run: |
+          cd lib-version
+          mvn install
+
+      - name: Build frontend
+        run: mvn install
+
       - name: Login
         uses: docker/login-action@v3
         with:
