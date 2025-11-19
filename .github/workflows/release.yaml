@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: doda25-team18/lib-version
-          path: lib-version
+          path: lib-version/target
 
       - name: Set version
         id: version
