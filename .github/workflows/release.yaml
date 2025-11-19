@@ -41,6 +41,11 @@ jobs:
       #       </servers>
       #     </settings>" > $HOME/.m2/settings.xml
 
+      - name: Build lib-version locally
+        run: |
+          cd lib-version
+          mvn install
+
       - name: Frontend
         run: mvn install
 
