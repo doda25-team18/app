@@ -28,6 +28,19 @@ jobs:
           distribution: temurin
           java-version: 25
 
+      - name: Set up Maven authentication
+        run: |
+          mkdir -p $HOME/.m2
+          echo "<settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.GH_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>" > $HOME/.m2/settings.xml
+
       - name: Frontend
         run: mvn clean install -U
 
