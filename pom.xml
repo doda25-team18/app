@@ -36,9 +36,15 @@
             <groupId>doda25-team18</groupId>
             <artifactId>lib-version</artifactId>
             <version>1.0.6</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/doda25-team18/lib-version</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
