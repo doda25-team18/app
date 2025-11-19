@@ -26,11 +26,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>doda25-team18</groupId>
+			<artifactId>lib-version</artifactId>
+			<version>1.0.0-feature-f11-advanced-versionin-251119-211412</version>
 		</dependency>
     </dependencies>
 
