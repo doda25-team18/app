@@ -38,11 +38,11 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency> -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>doda25-team18</groupId>
 			<artifactId>lib-version</artifactId>
 			<version>1.0.6</version>
-		</dependency>
+		</dependency> -->
     </dependencies>
 
 	<repositories>
