@@ -45,7 +45,7 @@ jobs:
           </settings>" > ~/.m2/settings.xml
 
       - name: Build frontend
-        run: mvn install
+        run: mvn install - U
 
       - name: Login
         uses: docker/login-action@v3
