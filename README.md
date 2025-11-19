@@ -13,4 +13,51 @@ The frontend service can be started through running the `Main` class (e.g., in y
 
 The server runs on port 8080. Once its startup has finished, you can access [localhost:8080/sms](http://localhost:8080/sms) in your browser to interact with the application.
 
+---
 
+## Local Development Setup: Maven Authentication for GitHub Packages
+
+To allow your local Maven (and thus your IDE) to download private dependencies like `lib-version` from GitHub Packages, you need to configure your personal Maven `settings.xml` file.
+
+1.  **Locate/Create `settings.xml`:**
+    *   **Mac/Linux:** `~/.m2/settings.xml`
+    *   **Windows:** `C:\Users\<YourUsername>\.m2\settings.xml`
+2.  **Add Server Credentials:** Open this file and add the following `<servers>` block, replacing `YOUR_GITHUB_USERNAME` with your GitHub username and `YOUR_GITHUB_TOKEN` with a GitHub Personal Access Token (PAT) that has at least `read:packages` scope.
+
+    ```xml
+    <settings>
+      <servers>
+        <server>
+          <id>github</id> <!-- This ID must match the repository ID in pom.xml -->
+          <username>YOUR_GITHUB_USERNAME</username>
+          <password>YOUR_GITHUB_TOKEN</password>
+        </server>
+      </servers>
+    </settings>
+    ```
+
+---
+
+## Building Docker Images
+
+To build and push multi-architecture Docker images for this `app` service:
+
+1.  **Ensure Docker Buildx is configured:**
+    ```bash
+    docker buildx create --use
+    ```
+2.  **Set Environment Variables:**
+    ```bash
+    export GITHUB_ACTOR="YOUR_GITHUB_USERNAME"
+    export GITHUB_TOKEN="YOUR_GITHUB_PAT_TOKEN"
+    ```
+3.  **Build and Push Image:** Run this command from the `app/` directory.
+    ```bash
+    docker buildx build \
+      --platform linux/amd64,linux/arm64 \
+      --build-arg GITHUB_ACTOR \
+      --secret id=github_token,env=GITHUB_TOKEN \
+      -t ghcr.io/doda25-team18/app:0.1.0 \
+     .
+    ```
+    *Replace `0.1.0` with the target version.*
