@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # - name: Checkout lib-version
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: doda25-team18/lib-version
-      #     path: lib-version
+      - name: Checkout lib-version
+        uses: actions/checkout@v4
+        with:
+          repository: doda25-team18/lib-version
+          path: lib-version
 
       - name: Set version
         id: version
