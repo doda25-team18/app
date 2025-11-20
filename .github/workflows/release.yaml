@@ -23,22 +23,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
 
-      # - name: Set up Maven authentication
-      #   run: |
-      #     mkdir -p $HOME/.m2
-      #     echo "<settings>
-      #       <servers>
-      #         <server>
-      #           <id>github</id>
-      #           <username>${{ github.actor }}</username>
-      #           <password>${{ secrets.GH_TOKEN }}</password>
-      #         </server>
-      #       </servers>
-      #     </settings>" > $HOME/.m2/settings.xml
+      # - name: Set version
+      #   id: version
+      #   run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
-      - name: Set version
+      - name: Extract version from pom.xml
         id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        run: |
+          VERSION=$(xmllint --xpath "string(//project/version)" pom.xml)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -54,3 +47,4 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:${{ env.VERSION }}
+            ghcr.io/${{ github.repository }}:latest
