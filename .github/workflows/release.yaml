@@ -30,7 +30,7 @@ jobs:
       - name: Extract version from pom.xml
         id: version
         run: |
-          VERSION=$(xmllint --xpath "string(//project/version)" pom.xml)
+          VERSION=$(grep -m1 "<version>" pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
