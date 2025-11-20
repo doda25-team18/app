@@ -17,6 +17,13 @@
 		<java.version>25</java.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/doda25-team18/lib-version</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>doda25-team18</groupId>
