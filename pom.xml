@@ -45,14 +45,6 @@
 		</dependency>
     </dependencies>
 
-	<repositories>
-    	<repository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/doda25-team18/lib-version</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 			<plugin>
