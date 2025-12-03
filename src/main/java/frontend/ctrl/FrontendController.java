@@ -27,6 +27,10 @@ public class FrontendController {
 
     private int numPredictions = 0;
     private int correctPredictions = 0;
+    private int numHam = 0;
+    private int numSpam = 0;
+    private int correctHam = 0;
+    private int correctSpam = 0;
     private ArrayList<Float> predictionDelays = new ArrayList<>();
     static final float[] predictionBuckets = {0.02f, 0.05f, 0.1f, 0.2f, 0.5f};
 
@@ -72,8 +76,15 @@ public class FrontendController {
         System.out.printf("Requesting prediction for \"%s\" ...\n", sms.sms);
         sms.result = getPrediction(sms);
         System.out.printf("Prediction: %s\n", sms.result);
-        if(Objects.equals(sms.guess, sms.result)) correctPredictions++;
-        numPredictions++;
+        if(Objects.equals(sms.guess, sms.result)) {
+            if(sms.result.equals("spam")) {
+                correctSpam++;
+            } else {
+                correctHam++;
+            }
+        }
+        if(sms.result.equals("spam")) numSpam++;
+        else numHam++;
         return sms;
     }
 
@@ -95,11 +106,13 @@ public class FrontendController {
     public String getMetrics() {
         StringBuilder m = new StringBuilder("# HELP num_predictions This is the total amount of predictions that were requested and handled\n");
         m.append("# TYPE num_predictions counter\n");
-        m.append("num_predictions ").append(numPredictions).append("\n\n");
+        m.append("num_predictions{model_response=\"spam\"} ").append(numSpam).append("\n");
+        m.append("num_predictions{model_response=\"ham\"} ").append(numHam).append("\n\n");
 
-        m.append("# HELP correct_predictions_ratio This is the fraction of predictions that were correct\n");
+        m.append("# HELP correct_predictions_ratio This is the fraction of predictions where the user correctly predicted the model response\n");
         m.append("# TYPE correct_predictions_ratio gauge\n");
-        m.append("correct_predictions_ratio ").append((float) correctPredictions / numPredictions).append("\n\n");
+        m.append("correct_predictions_ratio{model_response=\"spam\"} ").append((float) correctSpam / numSpam).append("\n"); // could be NaN
+        m.append("correct_predictions_ratio{model_response=\"ham\"} ").append((float) correctHam / numHam).append("\n\n"); // could be NaN
 
         m.append("# HELP predict_latency_seconds This is how long it took to get a response from the model service in seconds\n");
         m.append("# TYPE predict_latency_seconds histogram\n");
@@ -108,7 +121,7 @@ public class FrontendController {
         }
         m.append("predict_latency_seconds_bucket{le=\"+Inf\"} ").append(predictionDelays.size()).append("\n");
         m.append("predict_latency_seconds_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum()).append("\n");
-        m.append("predict_latency_seconds_count" ).append(predictionDelays.size()).append("\n");
+        m.append("predict_latency_seconds_count " ).append(predictionDelays.size()).append("\n");
         return m.toString();
     }
 }
