@@ -97,18 +97,18 @@ public class FrontendController {
         m.append("# TYPE num_predictions counter\n");
         m.append("num_predictions ").append(numPredictions).append("\n\n");
 
-        m.append("# HELP correct_predictions This is the fraction of predictions that were correct\n");
-        m.append("# TYPE correct_predictions gauge\n");
-        m.append("correct_predictions ").append((float) correctPredictions / numPredictions).append("\n\n");
+        m.append("# HELP correct_predictions_ratio This is the fraction of predictions that were correct\n");
+        m.append("# TYPE correct_predictions_ratio gauge\n");
+        m.append("correct_predictions_ratio ").append((float) correctPredictions / numPredictions).append("\n\n");
 
-        m.append("# HELP predict_latency This is how long it took to get a response from the model service in seconds\n");
-        m.append("# TYPE predict_latency histogram\n");
+        m.append("# HELP predict_latency_seconds This is how long it took to get a response from the model service in seconds\n");
+        m.append("# TYPE predict_latency_seconds histogram\n");
         for(float bucket : predictionBuckets) {
-            m.append("predict_latency_bucket{le=\"").append(bucket).append("\"} ").append(predictionDelays.stream().filter(x -> x <= bucket).count()).append("\n");
+            m.append("predict_latency_seconds_bucket{le=\"").append(bucket).append("\"} ").append(predictionDelays.stream().filter(x -> x <= bucket).count()).append("\n");
         }
-        m.append("predict_latency_bucket{le=\"+Inf\"} ").append(predictionDelays.size()).append("\n");
-        m.append("predict_latency_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum()).append("\n");
-        m.append("predict_latency_count" ).append(predictionDelays.size()).append("\n");
+        m.append("predict_latency_seconds_bucket{le=\"+Inf\"} ").append(predictionDelays.size()).append("\n");
+        m.append("predict_latency_seconds_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum()).append("\n");
+        m.append("predict_latency_seconds_count" ).append(predictionDelays.size()).append("\n");
         return m.toString();
     }
 }
