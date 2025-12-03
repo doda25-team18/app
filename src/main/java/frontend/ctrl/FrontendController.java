@@ -28,7 +28,7 @@ public class FrontendController {
     private int numPredictions = 0;
     private int correctPredictions = 0;
     private ArrayList<Float> predictionDelays = new ArrayList<>();
-    static final float[] predictionBuckets = {0.05f, 0.1f, 0.2f, 0.5f, 1.0f};
+    static final float[] predictionBuckets = {0.02f, 0.05f, 0.1f, 0.2f, 0.5f};
 
     private RestTemplateBuilder rest;
 
