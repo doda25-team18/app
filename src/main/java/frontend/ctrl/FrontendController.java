@@ -2,6 +2,7 @@ package frontend.ctrl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import doda25.team18.VersionUtil;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -22,6 +23,11 @@ import jakarta.servlet.http.HttpServletRequest;
 public class FrontendController {
 
     private String modelHost;
+
+    private int numPredictions = 0;
+    private int correctPredictions = 0;
+    private ArrayList<Float> predictionDelays = new ArrayList<>();
+    static final float[] predictionBuckets = {0.05f, 0.1f, 0.2f, 0.5f, 1.0f};
 
     private RestTemplateBuilder rest;
 
@@ -65,16 +71,43 @@ public class FrontendController {
         System.out.printf("Requesting prediction for \"%s\" ...\n", sms.sms);
         sms.result = getPrediction(sms);
         System.out.printf("Prediction: %s\n", sms.result);
+        if(sms.guess == sms.result) correctPredictions++;
+        numPredictions++;
         return sms;
     }
 
     private String getPrediction(Sms sms) {
         try {
             var url = new URI(modelHost + "/predict");
+            long start = System.nanoTime();
             var c = rest.build().postForEntity(url, sms, Sms.class);
+            long end = System.nanoTime();
+            float secondsElapsed = end - start / 1_000_000_000f;
+            predictionDelays.add(secondsElapsed);
             return c.getBody().result.trim();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+    @GetMapping({"/metrics", "/metrics/"})
+    @ResponseBody
+    public String getMetrics() {
+        StringBuilder m = new StringBuilder("# HELP num_predictions This is the total amount of predictions that were requested and handled\n");
+        m.append("# TYPE num_predictions counter\n");
+        m.append("num_predictions ").append(numPredictions).append("\n\n");
+
+        m.append("# HELP correct_predictions This is the fraction of predictions that were correct\n");
+        m.append("# TYPE correct_predictions gauge\n");
+        m.append("correct_predictions ").append((float) correctPredictions / numPredictions).append("\n\n");
+
+        m.append("# HELP predict_latency This is how long it took to get a response from the model service in seconds\n");
+        m.append("# TYPE predict_latency histogram\n");
+        for(float bucket : predictionBuckets) {
+            m.append("predict_latency_bucket{le=\"").append(bucket).append("\"} ").append(predictionDelays.stream().filter(x -> x <= bucket).count());
+        }
+        m.append("predict_latency_bucket{le=\"+Inf\"} ").append(predictionDelays.size());
+        m.append("predict_latency_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum());
+        m.append("predict_latency_count" ).append(predictionDelays.size());
+        return m.toString();
     }
 }
