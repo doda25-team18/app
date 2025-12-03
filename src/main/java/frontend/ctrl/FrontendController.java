@@ -3,6 +3,7 @@ package frontend.ctrl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import doda25.team18.VersionUtil;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -71,7 +72,7 @@ public class FrontendController {
         System.out.printf("Requesting prediction for \"%s\" ...\n", sms.sms);
         sms.result = getPrediction(sms);
         System.out.printf("Prediction: %s\n", sms.result);
-        if(sms.guess == sms.result) correctPredictions++;
+        if(Objects.equals(sms.guess, sms.result)) correctPredictions++;
         numPredictions++;
         return sms;
     }
@@ -82,7 +83,7 @@ public class FrontendController {
             long start = System.nanoTime();
             var c = rest.build().postForEntity(url, sms, Sms.class);
             long end = System.nanoTime();
-            float secondsElapsed = end - start / 1_000_000_000f;
+            float secondsElapsed = (end - start) / 1_000_000_000f;
             predictionDelays.add(secondsElapsed);
             return c.getBody().result.trim();
         } catch (URISyntaxException e) {
@@ -103,11 +104,11 @@ public class FrontendController {
         m.append("# HELP predict_latency This is how long it took to get a response from the model service in seconds\n");
         m.append("# TYPE predict_latency histogram\n");
         for(float bucket : predictionBuckets) {
-            m.append("predict_latency_bucket{le=\"").append(bucket).append("\"} ").append(predictionDelays.stream().filter(x -> x <= bucket).count());
+            m.append("predict_latency_bucket{le=\"").append(bucket).append("\"} ").append(predictionDelays.stream().filter(x -> x <= bucket).count()).append("\n");
         }
-        m.append("predict_latency_bucket{le=\"+Inf\"} ").append(predictionDelays.size());
-        m.append("predict_latency_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum());
-        m.append("predict_latency_count" ).append(predictionDelays.size());
+        m.append("predict_latency_bucket{le=\"+Inf\"} ").append(predictionDelays.size()).append("\n");
+        m.append("predict_latency_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum()).append("\n");
+        m.append("predict_latency_count" ).append(predictionDelays.size()).append("\n");
         return m.toString();
     }
 }
