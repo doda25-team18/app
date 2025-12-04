@@ -111,8 +111,8 @@ public class FrontendController {
 
         m.append("# HELP correct_predictions_ratio This is the fraction of predictions where the user correctly predicted the model response\n");
         m.append("# TYPE correct_predictions_ratio gauge\n");
-        m.append("correct_predictions_ratio{model_response=\"spam\"} ").append((float) correctSpam / numSpam).append("\n"); // could be NaN
-        m.append("correct_predictions_ratio{model_response=\"ham\"} ").append((float) correctHam / numHam).append("\n\n"); // could be NaN
+        m.append("correct_predictions_ratio{model_response=\"spam\"} ").append(numSpam > 0 ? (float) correctSpam / numSpam : 0.0f).append("\n");
+        m.append("correct_predictions_ratio{model_response=\"ham\"} ").append(numHam > 0 ? (float) correctHam / numHam : 0.0f).append("\n\n");
 
         m.append("# HELP predict_latency_seconds This is how long it took to get a response from the model service in seconds\n");
         m.append("# TYPE predict_latency_seconds histogram\n");
