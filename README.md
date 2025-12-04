@@ -61,3 +61,32 @@ To build and push multi-architecture Docker images for this `app` service:
      .
     ```
     *Replace `0.1.0` with the target version.*
+
+    
+## Metrics
+The `app` service exposes three Prometheus metrics at the `/sms/metrics` endpoint
+
+An example output of this endpoint is given below:
+
+```
+# HELP num_predictions This is the total amount of predictions that were requested and handled
+# TYPE num_predictions counter
+num_predictions{model_response="spam"} 1
+num_predictions{model_response="ham"} 13
+
+# HELP correct_predictions_ratio This is the fraction of predictions where the user correctly predicted the model response
+# TYPE correct_predictions_ratio gauge
+correct_predictions_ratio{model_response="spam"} 1.0
+correct_predictions_ratio{model_response="ham"} 0.30769232
+
+# HELP predict_latency_seconds This is how long it took to get a response from the model service in seconds
+# TYPE predict_latency_seconds histogram
+predict_latency_seconds_bucket{le="0.02"} 6
+predict_latency_seconds_bucket{le="0.05"} 13
+predict_latency_seconds_bucket{le="0.1"} 13
+predict_latency_seconds_bucket{le="0.2"} 13
+predict_latency_seconds_bucket{le="0.5"} 14
+predict_latency_seconds_bucket{le="+Inf"} 14
+predict_latency_seconds_sum 0.527920170687139
+predict_latency_seconds_count 14
+```
