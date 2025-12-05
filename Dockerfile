@@ -17,7 +17,7 @@ RUN mvn -s settings.xml dependency:go-offline -B
 
 COPY src ./src
 
-RUN mvn -s settings.xml package -Dskiptests
+RUN mvn -s settings.xml package -DskipTests
 
 # Different image with just the runtime
 FROM eclipse-temurin:25-jre-ubi10-minimal AS runtime-stage
