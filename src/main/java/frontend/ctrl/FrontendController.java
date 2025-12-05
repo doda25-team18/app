@@ -2,12 +2,14 @@ package frontend.ctrl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import doda25.team18.VersionUtil;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,9 +103,7 @@ public class FrontendController {
             throw new RuntimeException(e);
         }
     }
-    @GetMapping({"/metrics", "/metrics/"})
-    @ResponseBody
-    public String getMetrics() {
+    private String buildMetrics() {
         StringBuilder m = new StringBuilder("# HELP num_predictions This is the total amount of predictions that were requested and handled\n");
         m.append("# TYPE num_predictions counter\n");
         m.append("num_predictions{model_response=\"spam\"} ").append(numSpam).append("\n");
@@ -123,5 +123,12 @@ public class FrontendController {
         m.append("predict_latency_seconds_sum ").append(predictionDelays.stream().mapToDouble(Float::doubleValue).sum()).append("\n");
         m.append("predict_latency_seconds_count " ).append(predictionDelays.size()).append("\n");
         return m.toString();
+    }
+
+    // "produces = text/plain" was suggested as a bugfix by LLM
+    @GetMapping(value = {"/metrics"}, produces = "text/plain; version=0.0.4")
+    public ResponseEntity<String> getMetrics() {
+        return ResponseEntity.ok()
+            .body(buildMetrics());
     }
 }
