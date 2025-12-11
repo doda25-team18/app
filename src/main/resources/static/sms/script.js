@@ -1,5 +1,8 @@
 $(document).ready(function() {
 
+	var correctCount = 0;
+	var incorrectCount = 0;
+
 	function getSMS() {
 		return $("textarea").val().trim()
 	}
@@ -36,6 +39,13 @@ $(document).ready(function() {
 	function handleResult(res) {
 		var wasRight = res.result == getGuess()
 
+		if (wasRight) {
+			correctCount++;
+		} else {
+			incorrectCount++;
+		}
+		updateStats();
+
 		cleanResult()		
 		$("#result").addClass(wasRight ? "correct" : "incorrect")
 		$("#result").html("The classifier " + (wasRight ? "agrees" : "disagrees"))		
@@ -56,4 +66,16 @@ $(document).ready(function() {
 	$("input").click(function(e) {
 		$("#result").hide()
 	})
+
+	function updateStats() {
+		$("#correct-count").text(correctCount);
+		$("#incorrect-count").text(incorrectCount);
+		
+		var totalCount = correctCount + incorrectCount;
+		var accuracy = 0;
+		if (totalCount > 0) {
+			accuracy = Math.round((correctCount / totalCount) * 100);
+		}
+		$("#accuracy").text(accuracy + "%");
+	}
 })

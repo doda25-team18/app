@@ -43,3 +43,19 @@ button {
     right: 10px;
     top: 25px;
 }
+
+#stats {
+	margin-top: 10px;
+	font-size: 10px;
+	color: gray;
+}
+
+#stats #correct-count {
+	color: green;
+	font-weight: bold;
+}
+
+#stats #incorrect-count {
+	color: red;
+	font-weight: bold;
+}
